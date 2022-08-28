@@ -15,6 +15,9 @@ namespace BookingHero.Booking.Infra.DataBase.Mappings
 
             builder.Property(x => x.Number).HasMaxLength(6).IsRequired();
             builder.Property(x => x.Name).HasMaxLength(60).IsRequired();
+
+            builder.HasMany(x => x.Reservations)
+                   .WithOne(x => x.Room);
         }
     }
 }

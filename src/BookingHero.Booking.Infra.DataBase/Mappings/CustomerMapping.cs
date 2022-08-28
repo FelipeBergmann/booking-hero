@@ -17,8 +17,8 @@ namespace BookingHero.Booking.Infra.DataBase.Mappings
             builder.Property(x => x.Surname).HasMaxLength(200).IsRequired();
             builder.Property(x => x.Email).HasMaxLength(255).IsRequired();
 
-            builder.HasMany(x => x.Reservations)
-                .WithOne(x => x.Customer);
+            //builder.HasMany(x => x.Reservations)
+            //    .WithOne(x => x.Customer);
         }
     }
 }

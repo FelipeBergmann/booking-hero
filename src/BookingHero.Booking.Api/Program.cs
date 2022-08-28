@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<BookingContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("BookingHero.Booking.Infra.DataBase"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), 
+        b => b.MigrationsAssembly("BookingHero.Booking.Infra.DataBase"));
 });
 
 builder.Services.AddControllers();

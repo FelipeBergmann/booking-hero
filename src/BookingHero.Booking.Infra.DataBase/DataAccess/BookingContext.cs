@@ -6,12 +6,12 @@ namespace BookingHero.Booking.Infra.DataBase.DataAccess
 {
     public class BookingContext : DbContext
     {
-        public BookingContext(DbContextOptions options) : base(options)
+        public BookingContext(DbContextOptions<BookingContext> options) : base(options)
         {
+            this.ChangeTracker.LazyLoadingEnabled = false;
         }
 
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<Customer> Customers { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,5 +20,8 @@ namespace BookingHero.Booking.Infra.DataBase.DataAccess
 
             modelBuilder.ApplyMappings();
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.LogTo(Console.WriteLine);
     }
 }
