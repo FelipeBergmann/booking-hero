@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Booking.UnitTest.Database
 {
-    internal class RoomTest : DbBaseTest
+    internal class RoomDbTest : DbBaseTest
     {
         private IRoomRepository _roomRepository;
 

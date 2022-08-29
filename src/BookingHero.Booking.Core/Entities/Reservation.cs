@@ -57,7 +57,7 @@
         /// <summary>
         /// When the reservation was created
         /// </summary>
-        public DateTime CreatedAt { get; private set; }
+        public DateTime CreatedAOn { get; private set; }
 
         /// <summary>
         /// Confirms the reservation
