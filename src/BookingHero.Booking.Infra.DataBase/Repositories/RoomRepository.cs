@@ -2,6 +2,7 @@
 using BookingHero.Booking.Core.Repositories;
 using BookingHero.Booking.Infra.DataBase.DataAccess;
 using BookingHero.Booking.Infra.DataBase.Repositories.Common;
+using BookingHero.Booking.Core.Utils.Extensions;
 
 namespace BookingHero.Booking.Infra.DataBase.Repositories
 {
@@ -11,7 +12,7 @@ namespace BookingHero.Booking.Infra.DataBase.Repositories
         {
         }
 
-        public async Task<IEnumerable<Reservation>> FindConfirmedBookings(Guid roomId, DateOnly checkInDate)
+        public async Task<IEnumerable<Reservation>> FindRoomReservationForCheckInDate(Guid roomId, DateOnly checkInDate)
         {
             var room = await base.GetByIdAsync(roomId);
 
@@ -19,7 +20,20 @@ namespace BookingHero.Booking.Infra.DataBase.Repositories
                                 .Collection(r => r.Reservations)
                                 .Query()
                                 .Where(r => r.Status == ReservationStatus.Confirmed
-                                        && (r.CheckIn <= checkInDate && r.CheckOut >= checkInDate));
+                                        && (r.CheckIn <= checkInDate && r.CheckOut >= checkInDate))
+                                .OrderBy(x => x.CreatedOn);
+            return result;
+        }
+
+        public async Task<IEnumerable<Reservation>> FindReservation(Guid roomId, Guid? reservationId, string? reservationCode)
+        {
+            var room = await base.GetByIdAsync(roomId);
+
+            var result = _dbContext.Entry(room)
+                                .Collection(r => r.Reservations)
+                                .Query()
+                                .Where(r => (reservationId.IsEmpty() || r.Id == reservationId)
+                                        && (string.IsNullOrEmpty(reservationCode) || r.Code == reservationCode));
             return result;
         }
 

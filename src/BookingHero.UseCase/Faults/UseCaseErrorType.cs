@@ -4,6 +4,7 @@
     {
         Unknown,
         BadRequest,
-        InternalError
+        InternalError,
+        NotAllowed
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace BookingHero.Booking.Core.Entities
+﻿using BookingHero.Booking.Core.Utils.Extensions;
+
+namespace BookingHero.Booking.Core.Entities
 {
     /// <summary>
     /// Represents reservations of rooms
@@ -57,7 +59,7 @@
         /// <summary>
         /// When the reservation was created
         /// </summary>
-        public DateTime CreatedAOn { get; private set; }
+        public DateTime CreatedOn { get; private set; }
 
         /// <summary>
         /// Confirms the reservation
@@ -81,5 +83,33 @@
                 Status = ReservationStatus.Canceled;
             return this;
         }
+
+        /// <summary>
+        /// Generates a 8 digit reservation code to simplify for users
+        /// </summary>
+        /// <returns></returns>
+        public static string GenerateReservationCode() => Guid.NewGuid().ToString()[..8];
+
+        /// <summary>
+        /// Checks if the reservation time (between check in and check out) is allowed
+        /// </summary>
+        /// <param name="checkIn"></param>
+        /// <param name="checkOut"></param>
+        /// <returns></returns>
+        public static bool NotAllowedStayPeriod(DateOnly checkIn, DateOnly checkOut) => checkOut.CompareDifferenceInDays(checkIn) >= 3;
+
+        /// <summary>
+        /// Checks if the reservation anticipation is allowed
+        /// </summary>
+        /// <param name="checkIn"></param>
+        /// <returns></returns>
+        public static bool NotAllowedAdvanceReservation(DateOnly checkIn) => checkIn.CompareDifferenceInDays(DateTime.Today) > 30;
+
+        /// <summary>
+        /// Checks if the check in date is greater than the current date
+        /// </summary>
+        /// <param name="checkIn"></param>
+        /// <returns></returns>
+        public static bool CheckInDateNotAllowed(DateOnly checkIn) => checkIn.CompareTo(DateOnly.FromDateTime(DateTime.Today)) <= 0;
     }
 }

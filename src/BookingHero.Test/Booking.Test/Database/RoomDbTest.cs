@@ -43,7 +43,7 @@ namespace Booking.UnitTest.Database
         public async Task ShouldListRoomConfirmedReservations(Guid roomId, string checkInDate)
         {
             var convertedCheckInDate = DateOnly.Parse(checkInDate);
-            var reservations = await _roomRepository.FindConfirmedBookings(roomId, convertedCheckInDate);
+            var reservations = await _roomRepository.FindRoomReservationForCheckInDate(roomId, convertedCheckInDate);
 
             Assert.That(reservations, Is.Not.Null);
             Assert.True(reservations.Any());

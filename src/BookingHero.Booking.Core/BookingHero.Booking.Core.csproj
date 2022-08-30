@@ -14,8 +14,4 @@
     <ProjectReference Include="..\BookingHero.UseCase\BookingHero.UseCase.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UseCases\Reservation\" />
-  </ItemGroup>
-
 </Project>

@@ -3,9 +3,9 @@
     /// <summary>
     /// Command to book a room
     /// </summary>
-    public class RoomReservation
+    public class ReserveRoomCommand
     {
-        public RoomReservation(Guid roomId, DateOnly checkIn, DateOnly checkOut, string customerEmail)
+        public ReserveRoomCommand(Guid roomId, DateOnly checkIn, DateOnly checkOut, string customerEmail)
         {
             RoomId = roomId;
             CheckIn = checkIn;

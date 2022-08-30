@@ -1,14 +1,11 @@
 ﻿namespace BookingHero.Booking.Core.UseCases.Commands.Reservation
 {
-    /// <summary>
-    /// Command to list room's reservations
-    /// </summary>
-    public class ListRoomReservation
+    public class CancelReservationCommand
     {
-        public ListRoomReservation(Guid roomId, DateOnly checkIn)
+        public CancelReservationCommand(Guid roomId, string reservationCode)
         {
             RoomId = roomId;
-            CheckIn = checkIn;
+            ReservationCode = reservationCode;
         }
 
         /// <summary>
@@ -17,8 +14,8 @@
         public Guid RoomId { get; set; }
 
         /// <summary>
-        /// Check in date
+        /// Reservation code
         /// </summary>
-        public DateOnly CheckIn { get; set; }
+        public string ReservationCode { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BookingHero.Booking.Core.Repositories;
+using BookingHero.Booking.Core.UseCases.Reservation;
 using BookingHero.Booking.Core.UseCases.Room;
 using BookingHero.Booking.Infra.DataBase.DataAccess;
 using BookingHero.Booking.Infra.DataBase.Repositories;
@@ -37,6 +38,9 @@ namespace Booking.UnitTest.Common
 
             _services.AddTransient<IGetRoomUseCase, GetRoomUseCase>();
             _services.AddTransient<IListRoomUseCase, ListRoomUseCase>();
+            
+            _services.AddTransient<IReserveRoomUseCase, ReserveRoomUseCase>();
+            _services.AddTransient<ICancelReservationUseCase, CancelReservationUseCase>();
 
             _serviceProvider = _services.BuildServiceProvider();
         }

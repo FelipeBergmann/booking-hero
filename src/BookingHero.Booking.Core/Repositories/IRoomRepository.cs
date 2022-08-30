@@ -5,7 +5,28 @@ namespace BookingHero.Booking.Core.Repositories
 {
     public interface IRoomRepository : IRepository<Room>
     {
+        /// <summary>
+        /// Finds a room by its number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
         Task<Room> FindByNumber(string number);
-        Task<IEnumerable<Reservation>> FindConfirmedBookings(Guid roomId, DateOnly checkInDate);
+
+        /// <summary>
+        /// Finds any confirmed reservation for provided check in date
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="checkInDate"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Reservation>> FindRoomReservationForCheckInDate(Guid roomId, DateOnly checkInDate);
+
+        /// <summary>
+        /// Finds a reservation
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="reservationId"></param>
+        /// <param name="reservationCode"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Reservation>> FindReservation(Guid roomId, Guid? reservationId, string? reservationCode);
     }
 }
