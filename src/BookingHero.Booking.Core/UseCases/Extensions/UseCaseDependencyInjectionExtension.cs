@@ -17,6 +17,7 @@ namespace BookingHero.Booking.Core.UseCases.Extensions
             services.AddTransient<IListRoomReservationUseCase, ListRoomReservationUseCase>();
             services.AddTransient<IGetRoomUseCase, GetRoomUseCase>();
             services.AddTransient<IListRoomUseCase, ListRoomUseCase>();
+            services.AddTransient<IRoomReservationAvailability, RoomReservationAvailability>();
 
             return services;
         }

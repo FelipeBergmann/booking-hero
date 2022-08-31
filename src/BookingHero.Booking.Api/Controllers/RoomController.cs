@@ -51,6 +51,24 @@ namespace BookingHero.Booking.Api.Controllers
 
 
         /// <summary>
+        /// Verifies the availability of the room for the provided check in date
+        /// </summary>
+        /// <param name="roomId">Room's identifier</param>
+        /// <param name="checkIn">Desired check in date</param>
+        /// <param name="useCase"></param>
+        /// <returns></returns>
+        [HttpGet("{roomId:guid}/availability")]
+        [ProducesResponseType(typeof(IEnumerable<Dto.RoomAvailability>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RoomAvailability([FromRoute] Guid roomId, [FromQuery(Name = "checkIn")]DateTime checkIn, [FromServices] IRoomReservationAvailability useCase)
+        {
+            await useCase.Resolve(new RoomReservationAvailabilityCommand(roomId, DateOnly.FromDateTime(checkIn)));
+
+            return ResolveResult(useCase);
+        }
+
+        /// <summary>
         /// List all rooms
         /// </summary>
         /// <param name="number">Room's number</param>
