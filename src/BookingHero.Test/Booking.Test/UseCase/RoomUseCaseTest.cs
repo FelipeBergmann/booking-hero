@@ -7,37 +7,61 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BookingHero.UseCase.Faults;
+using Microsoft.Extensions.Logging;
+using Moq;
+using BookingHero.Booking.Core.Repositories;
+using BookingHero.Booking.Core.Entities;
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using BookingHero.Booking.Core.UseCases.Room.Validation;
+using BookingHero.Booking.Core.UseCases.Dto;
 
 namespace Booking.UnitTest.UseCase
 {
     public class RoomUseCaseTest : UseCaseBaseTest
     {
-        private IGetRoomUseCase _getRoomUseCase;
-        private IListRoomUseCase _listRoomUseCase;
-
         [OneTimeSetUp]
         public void InitEnvironment()
         {
-            _getRoomUseCase = _serviceProvider.GetService<IGetRoomUseCase>()!;
-            _listRoomUseCase = _serviceProvider.GetService<IListRoomUseCase>()!;
         }
 
-        [TestCase("4c3e437a-9583-4252-a7c3-3d8971dd757b")]
-        public async Task ShouldGetRoom(Guid roomId)
+        [Test]
+        public async Task ShouldGetRoom()
         {
-            await _getRoomUseCase.Resolve(new GetRoomCommand(roomId));
+            Guid roomId = Guid.NewGuid();
+            var logger = new Mock<ILogger<GetRoomUseCase>>();
+            var validator = new GetRoomValidator();
+            var roomRepository = new Mock<IRoomRepository>();
 
-            Assert.That(_getRoomUseCase.IsFaulted, Is.False);
-            Assert.AreEqual(_getRoomUseCase.UseCaseResult.Id, roomId);
+            roomRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+                          .Returns(() =>
+                          {
+                              return Task.FromResult(new Room(roomId, "any name", "1010"));
+                          });
+
+
+            var getRoomUseCase = new GetRoomUseCase(logger.Object, roomRepository.Object, validator);
+            await getRoomUseCase.Resolve(new GetRoomCommand(roomId));
+
+            Assert.That(getRoomUseCase.IsFaulted, Is.False);
+            Assert.AreEqual(getRoomUseCase.UseCaseResult.Id, roomId);
         }
 
-        [TestCase]
+        [Test]
         public async Task ShouldNotFindRoom()
         {
-            await _getRoomUseCase.Resolve(new GetRoomCommand(Guid.NewGuid()));
-            var errors = _getRoomUseCase.GetErrors().FirstOrDefault();
+            Guid roomId = Guid.NewGuid();
+            var logger = new Mock<ILogger<GetRoomUseCase>>();
+            var validator = new GetRoomValidator();
+            var roomRepository = new Mock<IRoomRepository>();
+            roomRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()));
 
-            Assert.That(_getRoomUseCase.IsFaulted, Is.True);
+            var getRoomUseCase = new GetRoomUseCase(logger.Object, roomRepository.Object, validator);
+            await getRoomUseCase.Resolve(new GetRoomCommand(roomId));
+
+            var errors = getRoomUseCase.GetErrors().FirstOrDefault();
+
+            Assert.That(getRoomUseCase.IsFaulted, Is.True);
             Assert.AreEqual(errors?.Code, UseCaseErrorType.BadRequest);
         }
 
@@ -46,13 +70,30 @@ namespace Booking.UnitTest.UseCase
         [TestCase("1200", false)]
         public async Task ShouldListRooms(string roomNumber, bool expectedHasAny)
         {
-            await _listRoomUseCase.Resolve(new ListRoomCommand()
+            var logger = new Mock<ILogger<ListRoomUseCase>>();
+            var roomRepository = new Mock<IRoomRepository>();
+            roomRepository.Setup(x => x.Find(It.IsAny<Expression<Func<Room, bool>>>()))
+                          .Returns(() =>
+                          {
+                              if (!expectedHasAny)
+                                  return new List<Room>();
+
+                              var roomsList = new List<Room>()
+                              {
+                                  new Room(Guid.NewGuid(), "any name", "123")
+                              };
+
+                              return roomsList.AsEnumerable();
+                          });
+
+            var listRoomUseCase = new ListRoomUseCase(logger.Object, roomRepository.Object);
+            await listRoomUseCase.Resolve(new ListRoomCommand()
             {
                 Number = roomNumber
             });
 
-            Assert.That(_listRoomUseCase.IsFaulted, Is.False);
-            Assert.AreEqual(_listRoomUseCase.UseCaseResult.Any(), expectedHasAny);
+            Assert.That(listRoomUseCase.IsFaulted, Is.False);
+            Assert.AreEqual(listRoomUseCase.UseCaseResult.Any(), expectedHasAny);
         }
     }
 }

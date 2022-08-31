@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BookingHero.Booking.Infra.DataBase.migrations
+namespace BookingHero.Booking.Infra.DataBase.Migrations
 {
     [DbContext(typeof(BookingContext))]
     partial class BookingContextModelSnapshot : ModelSnapshot
@@ -22,31 +22,6 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Customer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("GivenName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers", (string)null);
-                });
-
             modelBuilder.Entity("BookingHero.Booking.Core.Entities.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -58,12 +33,33 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
                     b.Property<DateTime>("CheckOut")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2(7)")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("RoomId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("Code", "CheckIn", "CheckOut");
 
                     b.ToTable("Reservations", (string)null);
                 });
@@ -85,21 +81,23 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name");
+
                     b.ToTable("Rooms", (string)null);
                 });
 
             modelBuilder.Entity("BookingHero.Booking.Core.Entities.Reservation", b =>
                 {
-                    b.HasOne("BookingHero.Booking.Core.Entities.Customer", "Customer")
+                    b.HasOne("BookingHero.Booking.Core.Entities.Room", "Room")
                         .WithMany("Reservations")
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Customer", b =>
+            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Room", b =>
                 {
                     b.Navigation("Reservations");
                 });

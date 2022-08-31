@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BookingHero.Booking.Infra.DataBase.migrations
+namespace BookingHero.Booking.Infra.DataBase.Migrations
 {
     [DbContext(typeof(BookingContext))]
-    [Migration("20220830013216_fixBooking")]
-    partial class fixBooking
+    [Migration("20220831062904_init-database")]
+    partial class initdatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Booking", b =>
+            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -61,7 +61,7 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("BookingHero.Booking.Core.Entities.Room", b =>
@@ -84,10 +84,10 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
                     b.ToTable("Rooms", (string)null);
                 });
 
-            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Booking", b =>
+            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Reservation", b =>
                 {
                     b.HasOne("BookingHero.Booking.Core.Entities.Room", "Room")
-                        .WithMany("Bookings")
+                        .WithMany("Reservations")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -97,7 +97,7 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
             modelBuilder.Entity("BookingHero.Booking.Core.Entities.Room", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

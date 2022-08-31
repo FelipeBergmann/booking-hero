@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BookingHero.Booking.Infra.DataBase.migrations
+namespace BookingHero.Booking.Infra.DataBase.Migrations
 {
     [DbContext(typeof(BookingContext))]
-    [Migration("20220828203803_created-at-Booking2")]
-    partial class createdatBooking2
+    [Migration("20220831063324_create-table-index")]
+    partial class createtableindex
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Booking", b =>
+            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -35,11 +35,16 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
                     b.Property<DateTime>("CheckOut")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(7)
                         .HasColumnType("datetime2(7)")
-                        .HasDefaultValue(new DateTime(2022, 8, 28, 20, 38, 3, 641, DateTimeKind.Utc).AddTicks(5375));
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("CustomerEmail")
                         .IsRequired()
@@ -56,7 +61,9 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.HasIndex("Code", "CheckIn", "CheckOut");
+
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("BookingHero.Booking.Core.Entities.Room", b =>
@@ -76,13 +83,15 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name");
+
                     b.ToTable("Rooms", (string)null);
                 });
 
-            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Booking", b =>
+            modelBuilder.Entity("BookingHero.Booking.Core.Entities.Reservation", b =>
                 {
                     b.HasOne("BookingHero.Booking.Core.Entities.Room", "Room")
-                        .WithMany("Bookings")
+                        .WithMany("Reservations")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -92,7 +101,7 @@ namespace BookingHero.Booking.Infra.DataBase.migrations
 
             modelBuilder.Entity("BookingHero.Booking.Core.Entities.Room", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

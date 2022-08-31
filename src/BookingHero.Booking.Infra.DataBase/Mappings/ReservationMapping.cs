@@ -20,6 +20,8 @@ namespace BookingHero.Booking.Infra.DataBase.Mappings
             builder.Property(x => x.Code).IsRequired().HasMaxLength(8);
             builder.Property(x => x.CreatedOn).IsRequired().HasDefaultValueSql("getdate()").HasPrecision(7);
 
+            builder.HasIndex(x => new { x.Code, x.CheckIn, x.CheckOut });
+
             builder.HasOne(x => x.Room)
                    .WithMany(x => x.Reservations)
                    .HasForeignKey(x => x.RoomId);

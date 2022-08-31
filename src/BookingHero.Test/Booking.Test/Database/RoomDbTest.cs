@@ -21,55 +21,91 @@ namespace Booking.UnitTest.Database
             _roomRepository = _serviceProvider.GetService<IRoomRepository>();
         }
 
-        [TestCase("4c3e437a-9583-4252-a7c3-3d8971dd757b")]
-        public async Task ShouldFindARoomById(Guid id)
+        private Room InsertNewRoom()
         {
-            var room = await _roomRepository.GetByIdAsync(id);
+            var newRoom = new Room(Guid.NewGuid(), "Test room", "101");
+            _roomRepository.Add(newRoom);
+            _roomRepository.SaveChanges();
+
+            return newRoom;
+        }
+
+        private void RemoveRoom(Room room)
+        {
+            _roomRepository.Remove(room);
+            _roomRepository.SaveChanges();
+        }
+
+        [Test]
+        public async Task ShouldFindARoomById()
+        {
+            var newRoom = InsertNewRoom();
+
+            var room = await _roomRepository.GetByIdAsync(newRoom.Id);
 
             Assert.That(room, Is.Not.Null);
-            Assert.That(room.Id, Is.EqualTo(id));
+            Assert.That(room.Id, Is.EqualTo(newRoom.Id));
+
+            RemoveRoom(newRoom);
         }
-        
-        [TestCase("303")]
-        public async Task ShouldFindARoomByRoomNumber(string number)
+
+        [Test]
+        public async Task ShouldFindARoomByRoomNumber()
         {
-            var room = await _roomRepository.FindByNumber(number);
+            var newRoom = InsertNewRoom();
+
+            var room = await _roomRepository.FindByNumber("101");
 
             Assert.That(room, Is.Not.Null);
-            Assert.That(room.Number, Is.EqualTo(number));
+            Assert.That(room.Number, Is.EqualTo("101"));
+
+            RemoveRoom(newRoom);
         }
-        
-        [TestCase("4c3e437a-9583-4252-a7c3-3d8971dd757b", "27/08/2022")]
-        public async Task ShouldListRoomConfirmedReservations(Guid roomId, string checkInDate)
+
+        [Test]
+        public async Task ShouldListRoomConfirmedReservations()
         {
-            var convertedCheckInDate = DateOnly.Parse(checkInDate);
-            var reservations = await _roomRepository.FindRoomReservationForCheckInDate(roomId, convertedCheckInDate);
+            var newRoom = InsertNewRoom();
+            DateOnly checkIn = DateOnly.FromDateTime(DateTime.Today).AddDays(1);
+            DateOnly checkOut = checkIn.AddDays(3);
+
+            newRoom.AddReservation(new Reservation(Guid.NewGuid(), "test@test.com", newRoom, checkIn, checkOut, ReservationStatus.Confirmed, "code"));
+
+            _roomRepository.Update(newRoom);
+            _roomRepository.SaveChanges();
+
+            var reservations = await _roomRepository.FindRoomReservationForCheckInDate(newRoom.Id, checkIn);
 
             Assert.That(reservations, Is.Not.Null);
             Assert.True(reservations.Any());
-            Assert.AreEqual(reservations.First().Room.Id, roomId);
+            Assert.AreEqual(reservations.First().Room.Id, newRoom.Id);
+
+            RemoveRoom(newRoom);
         }
 
-        
-        [TestCase("4c3e437a-9583-4252-a7c3-3d8971dd757b", "27/08/2022", "30/08/2022", "email@email.com")]
-        public async Task ShouldCreateConfirmedReservation(Guid roomId, string checkInDate, string checkOutDate, string customerEmail)
+
+        [TestCase("27/08/2022", "30/08/2022", "email@email.com")]
+        public async Task ShouldCreateConfirmedReservation(string checkInDate, string checkOutDate, string customerEmail)
         {
+            var newRoom = InsertNewRoom();
+
             var checkIn = DateOnly.Parse(checkInDate);
             var checkOut = DateOnly.Parse(checkOutDate);
             var reservationId = Guid.NewGuid();
-            var room = new Room(roomId, "The Room", "303");
 
-            var reservation = new Reservation(reservationId, customerEmail, room, checkIn, checkOut, ReservationStatus.Confirmed, GenerateReservationCode());
+            var reservation = new Reservation(reservationId, customerEmail, newRoom, checkIn, checkOut, ReservationStatus.Confirmed, GenerateReservationCode());
 
-            var foundRoom = await _roomRepository.GetByIdAsync(roomId);
+            var foundRoom = await _roomRepository.GetByIdAsync(newRoom.Id);
             foundRoom.AddReservation(reservation);
 
             _roomRepository.Update(foundRoom);
 
             _roomRepository.SaveChanges();
 
-            foundRoom = await _roomRepository.GetByIdAsync(roomId);
+            foundRoom = await _roomRepository.GetByIdAsync(newRoom.Id);
             Assert.IsTrue(foundRoom.Reservations.Where(x => x.Id == reservationId).Any());
+
+            RemoveRoom(newRoom);
         }
     }
 }

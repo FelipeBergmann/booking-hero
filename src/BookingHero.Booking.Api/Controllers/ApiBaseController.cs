@@ -1,12 +1,11 @@
 ﻿using BookingHero.UseCase;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace BookingHero.Booking.Api.Controllers
 {
     public abstract class ApiBaseController : ControllerBase
     {
-        protected IActionResult ResolveResult<TCommand, TOut>(IUseCase<TCommand, TOut> useCase)
+        protected IActionResult ResolveResult<TCommand, TOut>(IUseCase<TCommand, TOut> useCase, string httpVerb = "Any")
         {
             if (useCase.IsFaulted)
             {
@@ -27,10 +26,13 @@ namespace BookingHero.Booking.Api.Controllers
                 }
             }
 
-            return Ok(useCase.UseCaseResult);
+            if (httpVerb.Equals("post", StringComparison.InvariantCultureIgnoreCase))
+                return StatusCode(StatusCodes.Status201Created, useCase.UseCaseResult);
+            else
+                return Ok(useCase.UseCaseResult);
         }
 
-        protected IActionResult ResolveResult<TCommand>(IUseCase<TCommand> useCase)
+        protected IActionResult ResolveResult<TCommand>(IUseCase<TCommand> useCase, string httpVerb = "Any")
         {
             if (useCase.IsFaulted)
             {
@@ -51,7 +53,10 @@ namespace BookingHero.Booking.Api.Controllers
                 }
             }
 
-            return Ok();
+            if (httpVerb.Equals("post", StringComparison.InvariantCultureIgnoreCase))
+                return StatusCode(StatusCodes.Status201Created);
+            else
+                return Ok();
         }
     }
 }
