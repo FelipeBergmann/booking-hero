@@ -42,9 +42,11 @@ namespace BookingHero.Booking.Api.Controllers
         [ProducesResponseType(typeof(Dto.Room), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateRoom()
+        public async Task<IActionResult> CreateRoom([FromBody] CreateRoom command, [FromServices]ICreateRoomUseCase useCase)
         {
-            return Ok();
+            await useCase.Resolve(new CreateRoomCommand(command.Name, command.Number));
+
+            return ResolveResult(useCase);
         }
 
 

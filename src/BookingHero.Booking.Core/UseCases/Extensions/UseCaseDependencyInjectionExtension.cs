@@ -9,6 +9,7 @@ namespace BookingHero.Booking.Core.UseCases.Extensions
     {
         public static IServiceCollection AddUseCases(this IServiceCollection services)
         {
+            services.AddTransient<ICreateRoomUseCase, CreateRoomUseCase>();
             services.AddTransient<IReserveRoomUseCase, ReserveRoomUseCase>();
             services.AddTransient<ICancelReservationUseCase, CancelReservationUseCase>();
             services.AddTransient<IGetReservationUseCase, GetReservationUseCase>();
