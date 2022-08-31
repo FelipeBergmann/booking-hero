@@ -20,11 +20,6 @@ namespace BookingHero.Booking.Core.UseCases.Dto
         public string CustomerEmail { get; set; }
 
         /// <summary>
-        /// Represents the room
-        /// </summary>
-        public RoomDto Room { get; set; }
-
-        /// <summary>
         /// Check In date
         /// </summary>
         public DateOnly CheckIn { get; set; }
@@ -44,11 +39,9 @@ namespace BookingHero.Booking.Core.UseCases.Dto
             Id = reservation.Id,
             Code = reservation.Code,
             CustomerEmail = reservation.CustomerEmail,
-            Room = reservation.Room,
             CheckIn = reservation.CheckIn,
             CheckOut = reservation.CheckOut,
             Status = reservation.Status
-
         };
     }
 }

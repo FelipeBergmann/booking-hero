@@ -42,8 +42,7 @@ namespace Booking.UnitTest.UseCase
                               new Reservation(Guid.NewGuid(), "", null, DateOnly.MinValue, DateOnly.MinValue, ReservationStatus.Confirmed, reservationCode)
                           }.AsEnumerable()));
 
-            roomRepository.Setup(r => r.Update(It.IsAny<Room>())).Verifiable("Repository Update was not called");
-            roomRepository.Setup(r => r.SaveChanges()).Verifiable("Repository SaveChanges was not called");
+            roomRepository.Setup(r => r.UpdateReservationStatus(It.IsAny<Guid>(), ReservationStatus.Canceled)).Verifiable("Update reservation status was not called");       
 
             var cancelReservationUseCase = new CancelReservationUseCase(_logger, roomRepository.Object);
 
@@ -54,8 +53,7 @@ namespace Booking.UnitTest.UseCase
             //Assert
             Assert.That(cancelReservationUseCase.IsFaulted, Is.False);
 
-            roomRepository.Verify(r => r.Update(It.IsAny<Room>()), Times.Once);
-            roomRepository.Verify(r => r.SaveChanges(), Times.Once);
+            roomRepository.Verify(r => r.UpdateReservationStatus(It.IsAny<Guid>(), ReservationStatus.Canceled), Times.Once);
         }
 
         [Test]

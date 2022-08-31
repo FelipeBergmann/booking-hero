@@ -41,6 +41,9 @@ namespace Booking.UnitTest.Common
             
             _services.AddTransient<IReserveRoomUseCase, ReserveRoomUseCase>();
             _services.AddTransient<ICancelReservationUseCase, CancelReservationUseCase>();
+            _services.AddTransient<IGetReservationUseCase, GetReservationUseCase>();
+            _services.AddTransient<IChangeReservationUseCase, ChangeReservationUseCase>();
+            _services.AddTransient<IListRoomReservationUseCase, ListRoomReservationUseCase>();            
 
             _serviceProvider = _services.BuildServiceProvider();
         }

@@ -44,5 +44,15 @@ namespace BookingHero.Booking.Core.Entities
 
             return this;
         }
+
+        public Room RemoveReservation(Reservation reservation)
+        {
+            if (Reservations == null)
+                return this;
+
+            Reservations.Remove(reservation);
+
+            return this;
+        }
     }
 }

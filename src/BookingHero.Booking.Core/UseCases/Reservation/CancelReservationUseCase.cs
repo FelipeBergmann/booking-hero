@@ -27,15 +27,8 @@ namespace BookingHero.Booking.Core.UseCases.Reservation
             if (!reservations.Any())
                 Fault(UseCase.Faults.UseCaseErrorType.BadRequest, "Reservation not found");
 
-            var reserve = reservations.FirstOrDefault();
-
-            reserve?.Cancel();
-
-            room?.AddReservation(reserve);
-
-            _roomRepository.Update(room);
-
-            _roomRepository.SaveChanges();
+            var reservation = reservations.FirstOrDefault();
+            await _roomRepository.UpdateReservationStatus(reservation.Id, Entities.ReservationStatus.Canceled);
         }
     }
 }

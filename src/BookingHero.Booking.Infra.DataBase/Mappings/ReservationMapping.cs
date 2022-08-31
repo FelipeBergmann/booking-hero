@@ -22,7 +22,7 @@ namespace BookingHero.Booking.Infra.DataBase.Mappings
 
             builder.HasOne(x => x.Room)
                    .WithMany(x => x.Reservations)
-                   .HasForeignKey("RoomId");
+                   .HasForeignKey(x => x.RoomId);
         }
     }
 }

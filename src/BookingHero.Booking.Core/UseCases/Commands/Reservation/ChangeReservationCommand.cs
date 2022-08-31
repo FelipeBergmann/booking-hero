@@ -1,8 +1,8 @@
 ﻿namespace BookingHero.Booking.Core.UseCases.Commands.Reservation
 {
-    public class ChangeReservation
+    public class ChangeReservationCommand
     {
-        public ChangeReservation(Guid roomId, string reservationCode)
+        public ChangeReservationCommand(Guid roomId, string reservationCode)
         {
             RoomId = roomId;
             ReservationCode = reservationCode;

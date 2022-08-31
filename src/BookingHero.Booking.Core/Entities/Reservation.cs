@@ -36,6 +36,8 @@ namespace BookingHero.Booking.Core.Entities
         /// </summary>
         public string CustomerEmail { get; set; }
 
+        public Guid RoomId { get; set; }
+
         /// <summary>
         /// Represents the room
         /// </summary>
@@ -81,6 +83,7 @@ namespace BookingHero.Booking.Core.Entities
         {
             if (Status != ReservationStatus.Canceled)
                 Status = ReservationStatus.Canceled;
+
             return this;
         }
 
@@ -111,5 +114,11 @@ namespace BookingHero.Booking.Core.Entities
         /// <param name="checkIn"></param>
         /// <returns></returns>
         public static bool CheckInDateNotAllowed(DateOnly checkIn) => checkIn.CompareTo(DateOnly.FromDateTime(DateTime.Today)) <= 0;
+
+        /// <summary>
+        /// Checks if the current reservation can change
+        /// </summary>
+        /// <returns></returns>
+        public bool CanChange() => Status != ReservationStatus.Canceled;
     }
 }

@@ -28,5 +28,21 @@ namespace BookingHero.Booking.Core.Repositories
         /// <param name="reservationCode"></param>
         /// <returns></returns>
         Task<IEnumerable<Reservation>> FindReservation(Guid roomId, Guid? reservationId, string? reservationCode);
+
+        /// <summary>
+        /// Update reservation status
+        /// </summary>
+        /// <param name="reservationId"></param>
+        /// <param name="newStatus"></param>
+        /// <returns></returns>
+        Task UpdateReservationStatus(Guid reservationId, ReservationStatus newStatus);
+
+        /// <summary>
+        /// Finds a reservation by its identifier or code
+        /// </summary>
+        /// <param name="reservationId"></param>
+        /// <param name="reservationCode"></param>
+        /// <returns></returns>
+        Task<Reservation> FindReservation(Guid? reservationId, string? reservationCode);
     }
 }

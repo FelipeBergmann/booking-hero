@@ -5,14 +5,14 @@
     /// </summary>
     public class GetReservationCommand
     {
-        public GetReservationCommand(Guid id)
-        {
-            Id = id;
-        }
-
         /// <summary>
         /// Reservation identifier
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid? Id { get; set; }
+
+        /// <summary>
+        /// Reservation code
+        /// </summary>
+        public string? Code { get; set; }
     }
 }
