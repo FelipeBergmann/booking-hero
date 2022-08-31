@@ -11,7 +11,7 @@ namespace BookingHero.Booking.Core.UseCases.Reservation
         private readonly IRoomRepository _roomRepository;
         private readonly IReserveRoomUseCase _reserveRoomUseCase;
         private readonly ICancelReservationUseCase _cancelReservationUseCase;
-        public ChangeReservationUseCase(ILogger logger, IRoomRepository roomRepository, IReserveRoomUseCase reserveRoomUseCase, ICancelReservationUseCase cancelReservationUseCase) : base(logger)
+        public ChangeReservationUseCase(ILogger<ChangeReservationUseCase> logger, IRoomRepository roomRepository, IReserveRoomUseCase reserveRoomUseCase, ICancelReservationUseCase cancelReservationUseCase) : base(logger)
         {
             _roomRepository = roomRepository;
             _reserveRoomUseCase = reserveRoomUseCase;

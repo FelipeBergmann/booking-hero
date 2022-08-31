@@ -1,4 +1,5 @@
-﻿using BookingHero.Booking.Core.UseCases.Commands.Reservation;
+﻿using BookingHero.Booking.Api.Payloads;
+using BookingHero.Booking.Core.UseCases.Commands.Reservation;
 using BookingHero.Booking.Core.UseCases.Commands.Room;
 using BookingHero.Booking.Core.UseCases.Dto;
 using BookingHero.Booking.Core.UseCases.Reservation;
@@ -8,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookingHero.Booking.Api.Controllers
 {
-    [ApiController, Route("api/room"), Produces("application/json")]
+    
+    [ApiVersion("1.0")]
+    [ApiController, Route("api/v{version:apiVersion}/[controller]"), Produces("application/json")]
     [AllowAnonymous]
     public class RoomController : ApiBaseController
     {
@@ -19,7 +22,7 @@ namespace BookingHero.Booking.Api.Controllers
         /// <param name="useCase"></param>
         /// <returns>Found room</returns>
         [HttpGet("{roomId:guid}")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.Room), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetRoom([FromRoute] Guid roomId, [FromServices] IGetRoomUseCase useCase)
@@ -36,7 +39,7 @@ namespace BookingHero.Booking.Api.Controllers
         /// <param name="useCase"></param>
         /// <returns></returns>
         [HttpPost("")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.Room), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateRoom()
@@ -48,16 +51,19 @@ namespace BookingHero.Booking.Api.Controllers
         /// <summary>
         /// List all rooms
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="number">Room's number</param>
         /// <param name="useCase"></param>
         /// <returns></returns>
         [HttpGet("")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Dto.Room>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ListRooms([FromQuery] ListRoomCommand command, [FromServices] IListRoomUseCase useCase)
+        public async Task<IActionResult> ListRooms([FromQuery(Name = "number")] string? number, [FromServices] IListRoomUseCase useCase)
         {
-            await useCase.Resolve(command);
+            await useCase.Resolve(new ListRoomCommand()
+            {
+                Number = number
+            });
 
             return ResolveResult(useCase);
         }
@@ -69,7 +75,7 @@ namespace BookingHero.Booking.Api.Controllers
         /// <param name="useCase"></param>
         /// <returns></returns>
         [HttpGet("{roomId:guid}/reservation/{reservationId:guid}")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.Reservation), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetReservation([FromRoute] Guid reservationId, [FromServices] IGetReservationUseCase useCase)
@@ -89,7 +95,7 @@ namespace BookingHero.Booking.Api.Controllers
         /// <param name="useCase"></param>
         /// <returns></returns>
         [HttpGet("{roomId:guid}/reservation/code/{reservationCode}")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.Reservation), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetReservation([FromRoute] string reservationCode, [FromServices] IGetReservationUseCase useCase)
@@ -105,16 +111,17 @@ namespace BookingHero.Booking.Api.Controllers
         /// <summary>
         /// Booking a room
         /// </summary>
+        /// <param name="roomId">Room's identifier</param>
         /// <param name="command">payload</param>
         /// <param name="useCase"></param>
         /// <returns></returns>
         [HttpPost("{roomId:guid}/reservation")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.Reservation), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RoomReservation([FromBody] ReserveRoomCommand command, [FromServices] IReserveRoomUseCase useCase)
+        public async Task<IActionResult> RoomReservation([FromRoute] Guid roomId, [FromBody] RoomReservation command, [FromServices] IReserveRoomUseCase useCase)
         {
-            await useCase.Resolve(command);
+            await useCase.Resolve(new ReserveRoomCommand(roomId, command.CheckIn, command.CheckOut, command.CustomerEmail));
 
             return ResolveResult(useCase);
         }
@@ -122,16 +129,22 @@ namespace BookingHero.Booking.Api.Controllers
         /// <summary>
         /// Change a booking
         /// </summary>
+        /// <param name="roomId">Room's identifier</param>
+        /// <param name="reservationCode">Reservation code</param>
         /// <param name="command">payload</param>
         /// <param name="useCase"></param>
         /// <returns></returns>
-        [HttpPut("{roomId:guid}/reservation")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [HttpPut("{roomId:guid}/reservation/{reservationCode}")]
+        [ProducesResponseType(typeof(Dto.Reservation), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ChangeRoomReservation([FromBody] ChangeReservationCommand command, [FromServices] IChangeReservationUseCase useCase)
+        public async Task<IActionResult> ChangeRoomReservation([FromRoute] Guid roomId, [FromRoute] string reservationCode, [FromBody] ChangeRoomReservation command, [FromServices] IChangeReservationUseCase useCase)
         {
-            await useCase.Resolve(command);
+            await useCase.Resolve(new ChangeReservationCommand(roomId, reservationCode)
+            {
+                CheckIn = command.CheckIn,
+                CheckOut = command.CheckOut
+            });
 
             return ResolveResult(useCase);
         }
@@ -139,16 +152,17 @@ namespace BookingHero.Booking.Api.Controllers
         /// <summary>
         /// Cancels a booking
         /// </summary>
-        /// <param name="command">payload</param>
+        /// <param name="roomId">Room's id</param>
+        /// <param name="reservationCode">Target reservation code</param>
         /// <param name="useCase"></param>
         /// <returns></returns>
-        [HttpDelete("{roomId:guid}/reservation")]
-        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
+        [HttpDelete("{roomId:guid}/reservation/{reservationCode}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CancelRoomReservation([FromBody] CancelReservationCommand command, [FromServices] ICancelReservationUseCase useCase)
+        public async Task<IActionResult> CancelRoomReservation([FromRoute] Guid roomId, [FromRoute] string reservationCode, [FromServices] ICancelReservationUseCase useCase)
         {
-            await useCase.Resolve(command);
+            await useCase.Resolve(new CancelReservationCommand(roomId, reservationCode));
 
             return ResolveResult(useCase);
         }

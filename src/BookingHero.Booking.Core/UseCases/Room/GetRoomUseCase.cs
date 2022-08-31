@@ -10,7 +10,7 @@ namespace BookingHero.Booking.Core.UseCases.Room
     public class GetRoomUseCase : UseCaseBase<GetRoomCommand, RoomDto>, IGetRoomUseCase
     {
         private readonly IRoomRepository _roomRepository;
-        public GetRoomUseCase(ILogger logger, IRoomRepository roomRepository) : base(logger)
+        public GetRoomUseCase(ILogger<GetRoomUseCase> logger, IRoomRepository roomRepository) : base(logger)
         {
             _roomRepository = roomRepository;
         }

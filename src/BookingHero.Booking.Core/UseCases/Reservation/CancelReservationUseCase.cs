@@ -8,7 +8,7 @@ namespace BookingHero.Booking.Core.UseCases.Reservation
     public class CancelReservationUseCase : UseCaseBase<CancelReservationCommand>, ICancelReservationUseCase
     {
         private readonly IRoomRepository _roomRepository;
-        public CancelReservationUseCase(ILogger logger, IRoomRepository roomRepository) : base(logger)
+        public CancelReservationUseCase(ILogger<CancelReservationUseCase> logger, IRoomRepository roomRepository) : base(logger)
         {
             _roomRepository = roomRepository;
         }

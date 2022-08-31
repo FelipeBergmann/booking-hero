@@ -11,7 +11,7 @@ namespace BookingHero.Booking.Api.Controllers
             if (useCase.IsFaulted)
             {
                 var firstError = useCase.GetErrors().FirstOrDefault();
-                var serializedErrors = JsonConvert.SerializeObject(useCase.GetErrors());
+                var serializedErrors = string.Join(", ", useCase.GetErrors().Select(x => x.Description));
                 switch (firstError?.Code)
                 {
                     case UseCase.Faults.UseCaseErrorType.InternalError:
@@ -35,7 +35,7 @@ namespace BookingHero.Booking.Api.Controllers
             if (useCase.IsFaulted)
             {
                 var firstError = useCase.GetErrors().FirstOrDefault();
-                var serializedErrors = JsonConvert.SerializeObject(useCase.GetErrors());
+                var serializedErrors = string.Join(", ", useCase.GetErrors().Select(x => x.Description));
                 switch (firstError?.Code)
                 {
                     case UseCase.Faults.UseCaseErrorType.InternalError:

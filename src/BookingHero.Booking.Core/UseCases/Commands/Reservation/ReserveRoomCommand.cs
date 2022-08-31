@@ -13,7 +13,7 @@
             CustomerEmail = customerEmail;
         }
 
-        public Guid RoomId { get; set; }
+        public Guid RoomId { get; private set; }
         public DateOnly CheckIn { get; set; }
         public DateOnly CheckOut { get; set; }
         public string CustomerEmail { get; set; }
