@@ -12,17 +12,18 @@ using Moq;
 using BookingHero.Booking.Core.Entities;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using BookingHero.Booking.Core.UseCases.Room.Validation;
 
 namespace Booking.UnitTest.UseCase
 {
     public class ReservationUseCaseTest : UseCaseBaseTest
     {
-        private ILogger _logger;
+        private Mock<ILogger<ReserveRoomUseCase>> _logger;
 
         [OneTimeSetUp]
         public void InitEnvironment()
         {
-            _logger = _serviceProvider.GetService<ILogger>()!;
+            _logger = new Mock<ILogger<ReserveRoomUseCase>>();
         }
 
         private IEnumerable<Reservation> EmptyReservationEnumeration() => new List<Reservation>();
@@ -57,10 +58,11 @@ namespace Booking.UnitTest.UseCase
             roomRepository.Setup(r => r.Update(It.IsAny<Room>())).Verifiable("Repository Update was not called");
             roomRepository.Setup(r => r.SaveChanges()).Verifiable("Repository SaveChanges was not called");
 
-            var reserveRoomUseCase = new ReserveRoomUseCase(_logger, roomRepository.Object);
+            var validator = new RoomReservationValidator();
+            var reserveRoomUseCase = new ReserveRoomUseCase(_logger.Object, roomRepository.Object, validator);
  
             //Act
-            var command = new ReserveRoomCommand(roomId, checkIn, checkOut, "customerEmail");
+            var command = new ReserveRoomCommand(roomId, checkIn, checkOut, "customerEmail@email.com");
             await reserveRoomUseCase.Resolve(command);
 
             //Assert
@@ -91,10 +93,11 @@ namespace Booking.UnitTest.UseCase
             roomRepository.Setup(r => r.Update(It.IsAny<Room>())).Verifiable("Repository Update was not called");
             roomRepository.Setup(r => r.SaveChanges()).Verifiable("Repository SaveChanges was not called");
 
-            var reserveRoomUseCase = new ReserveRoomUseCase(_logger, roomRepository.Object);
+            var validator = new RoomReservationValidator();
+            var reserveRoomUseCase = new ReserveRoomUseCase(_logger.Object, roomRepository.Object, validator);
 
             //Act
-            var command = new ReserveRoomCommand(roomId, checkIn, checkOut, "customerEmail");
+            var command = new ReserveRoomCommand(roomId, checkIn, checkOut, "customerEmail@email.com");
             await reserveRoomUseCase.Resolve(command);
 
             //Assert
@@ -119,7 +122,8 @@ namespace Booking.UnitTest.UseCase
             var roomRepository = new Mock<IRoomRepository>();
             roomRepository.Setup(r => r.GetByIdAsync(roomId)).Returns(Task.FromResult(new Room(roomId, "The room", "303")));
 
-            var reserveRoomUseCase = new ReserveRoomUseCase(_logger, roomRepository.Object);
+            var validator = new RoomReservationValidator();
+            var reserveRoomUseCase = new ReserveRoomUseCase(_logger.Object, roomRepository.Object, validator);
 
             //Act
             var command = new ReserveRoomCommand(roomId, checkIn, checkOut, "customerEmail");
@@ -144,10 +148,11 @@ namespace Booking.UnitTest.UseCase
             var roomRepository = new Mock<IRoomRepository>();
             roomRepository.Setup(r => r.GetByIdAsync(roomId)).Returns(Task.FromResult(new Room(roomId, "The room", "303")));
 
-            var reserveRoomUseCase = new ReserveRoomUseCase(_logger, roomRepository.Object);
+            var validator = new RoomReservationValidator();
+            var reserveRoomUseCase = new ReserveRoomUseCase(_logger.Object, roomRepository.Object, validator);
 
             //Act
-            var command = new ReserveRoomCommand(roomId, checkIn, checkOut, "customerEmail");
+            var command = new ReserveRoomCommand(roomId, checkIn, checkOut, "customerEmail@email.com");
             await reserveRoomUseCase.Resolve(command);
 
             //Assert

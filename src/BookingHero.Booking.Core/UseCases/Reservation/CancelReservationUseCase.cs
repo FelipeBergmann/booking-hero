@@ -1,5 +1,6 @@
 ﻿using BookingHero.Booking.Core.Repositories;
 using BookingHero.Booking.Core.UseCases.Commands.Reservation;
+using BookingHero.Booking.Core.UseCases.Room.Validation;
 using BookingHero.UseCase;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +9,7 @@ namespace BookingHero.Booking.Core.UseCases.Reservation
     public class CancelReservationUseCase : UseCaseBase<CancelReservationCommand>, ICancelReservationUseCase
     {
         private readonly IRoomRepository _roomRepository;
-        public CancelReservationUseCase(ILogger<CancelReservationUseCase> logger, IRoomRepository roomRepository) : base(logger)
+        public CancelReservationUseCase(ILogger<CancelReservationUseCase> logger, IRoomRepository roomRepository, CancelReservationValidator validator) : base(logger, validator)
         {
             _roomRepository = roomRepository;
         }

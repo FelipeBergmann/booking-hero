@@ -12,17 +12,18 @@ using Moq;
 using BookingHero.Booking.Core.Entities;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using BookingHero.Booking.Core.UseCases.Room.Validation;
 
 namespace Booking.UnitTest.UseCase
 {
     public class ChangeReservationUseCaseTest : UseCaseBaseTest
     {
-        private ILogger _logger;
+        private Mock<ILogger<ChangeReservationUseCase>> _logger;
 
         [OneTimeSetUp]
         public void InitEnvironment()
         {
-            _logger = _serviceProvider.GetService<ILogger>()!;
+            _logger = new Mock<ILogger<ChangeReservationUseCase>>();
         }
 
         private IEnumerable<Reservation> EmptyReservationEnumeration() => new List<Reservation>();
@@ -65,10 +66,15 @@ namespace Booking.UnitTest.UseCase
             var cancelReservationUseCaseMock = new Mock<ICancelReservationUseCase>();
             cancelReservationUseCaseMock.Setup(x => x.Resolve(It.IsAny<CancelReservationCommand>()));
 
-            var changeReservationUseCase = new ChangeReservationUseCase(_logger, roomRepository.Object, reserveRoomUseCaseMock.Object, cancelReservationUseCaseMock.Object);
+            var validator = new ChangeReservationValidator();
+            var changeReservationUseCase = new ChangeReservationUseCase(_logger.Object, roomRepository.Object, reserveRoomUseCaseMock.Object, cancelReservationUseCaseMock.Object, validator);
 
             //Act
-            var command = new ChangeReservationCommand(roomId, reservationCode);
+            var command = new ChangeReservationCommand(roomId, reservationCode)
+            {
+                CheckIn = checkIn,
+                CheckOut = checkOut
+            };
             await changeReservationUseCase.Resolve(command);
 
             //Assert
@@ -87,7 +93,8 @@ namespace Booking.UnitTest.UseCase
 
             var reserveRoomUseCaseMock = new Mock<IReserveRoomUseCase>();
             var cancelReservationUseCaseMock = new Mock<ICancelReservationUseCase>();
-            var changeReservationUseCase = new ChangeReservationUseCase(_logger, roomRepository.Object, reserveRoomUseCaseMock.Object, cancelReservationUseCaseMock.Object);
+            var validator = new ChangeReservationValidator();
+            var changeReservationUseCase = new ChangeReservationUseCase(_logger.Object, roomRepository.Object, reserveRoomUseCaseMock.Object, cancelReservationUseCaseMock.Object, validator);
 
             //Act
             var command = new ChangeReservationCommand(Guid.NewGuid(), "CODE");
@@ -110,7 +117,8 @@ namespace Booking.UnitTest.UseCase
 
             var reserveRoomUseCaseMock = new Mock<IReserveRoomUseCase>();
             var cancelReservationUseCaseMock = new Mock<ICancelReservationUseCase>();
-            var changeReservationUseCase = new ChangeReservationUseCase(_logger, roomRepository.Object, reserveRoomUseCaseMock.Object, cancelReservationUseCaseMock.Object);
+            var validator = new ChangeReservationValidator();
+            var changeReservationUseCase = new ChangeReservationUseCase(_logger.Object, roomRepository.Object, reserveRoomUseCaseMock.Object, cancelReservationUseCaseMock.Object, validator);
 
             //Act
             var command = new ChangeReservationCommand(Guid.NewGuid(), "CODE");

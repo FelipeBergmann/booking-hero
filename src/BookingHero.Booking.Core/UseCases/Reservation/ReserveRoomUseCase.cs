@@ -1,6 +1,7 @@
 ﻿using BookingHero.Booking.Core.Repositories;
 using BookingHero.Booking.Core.UseCases.Commands.Reservation;
 using BookingHero.Booking.Core.UseCases.Dto;
+using BookingHero.Booking.Core.UseCases.Room.Validation;
 using BookingHero.UseCase;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace BookingHero.Booking.Core.UseCases.Reservation
     public class ReserveRoomUseCase : UseCaseBase<ReserveRoomCommand, ReservationDto>, IReserveRoomUseCase
     {
         private readonly IRoomRepository _roomRepository;
-        public ReserveRoomUseCase(ILogger<ReserveRoomUseCase> logger, IRoomRepository roomRepository) : base(logger)
+        public ReserveRoomUseCase(ILogger<ReserveRoomUseCase> logger, IRoomRepository roomRepository, RoomReservationValidator validator) : base(logger, validator)
         {
             _roomRepository = roomRepository;
         }

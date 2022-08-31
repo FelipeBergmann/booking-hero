@@ -12,17 +12,18 @@ using Moq;
 using BookingHero.Booking.Core.Entities;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using BookingHero.Booking.Core.UseCases.Room.Validation;
 
 namespace Booking.UnitTest.UseCase
 {
     public class CancelReservationUseCaseTest : UseCaseBaseTest
     {
-        private ILogger _logger;
+        private Mock<ILogger<CancelReservationUseCase>> _logger;
 
         [OneTimeSetUp]
         public void InitEnvironment()
         {
-            _logger = _serviceProvider.GetService<ILogger>()!;
+            _logger = new Mock<ILogger<CancelReservationUseCase>>();
         }
 
         private IEnumerable<Reservation> EmptyReservationEnumeration() => new List<Reservation>();
@@ -42,9 +43,10 @@ namespace Booking.UnitTest.UseCase
                               new Reservation(Guid.NewGuid(), "", null, DateOnly.MinValue, DateOnly.MinValue, ReservationStatus.Confirmed, reservationCode)
                           }.AsEnumerable()));
 
-            roomRepository.Setup(r => r.UpdateReservationStatus(It.IsAny<Guid>(), ReservationStatus.Canceled)).Verifiable("Update reservation status was not called");       
+            roomRepository.Setup(r => r.UpdateReservationStatus(It.IsAny<Guid>(), ReservationStatus.Canceled)).Verifiable("Update reservation status was not called");
 
-            var cancelReservationUseCase = new CancelReservationUseCase(_logger, roomRepository.Object);
+            var validator = new CancelReservationValidator();
+            var cancelReservationUseCase = new CancelReservationUseCase(_logger.Object, roomRepository.Object, validator);
 
             //Act
             var command = new CancelReservationCommand(roomId,reservationCode);
@@ -68,7 +70,8 @@ namespace Booking.UnitTest.UseCase
             roomRepository.Setup(r => r.FindReservation(roomId, null, reservationCode))
                           .Returns(Task.FromResult(EmptyReservationEnumeration()));
 
-            var cancelReservationUseCase = new CancelReservationUseCase(_logger, roomRepository.Object);
+            var validator = new CancelReservationValidator();
+            var cancelReservationUseCase = new CancelReservationUseCase(_logger.Object, roomRepository.Object, validator);
 
             //Act
             var command = new CancelReservationCommand(roomId,reservationCode);

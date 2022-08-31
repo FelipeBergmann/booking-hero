@@ -1,5 +1,6 @@
 ﻿using BookingHero.Booking.Core.UseCases.Reservation;
 using BookingHero.Booking.Core.UseCases.Room;
+using BookingHero.Booking.Core.UseCases.Room.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingHero.Booking.Core.UseCases.Extensions
@@ -18,6 +19,14 @@ namespace BookingHero.Booking.Core.UseCases.Extensions
             services.AddTransient<IGetRoomUseCase, GetRoomUseCase>();
             services.AddTransient<IListRoomUseCase, ListRoomUseCase>();
             services.AddTransient<IRoomReservationAvailability, RoomReservationAvailability>();
+
+            services.AddTransient<CreateRoomValidator>();
+            services.AddTransient<GetRoomValidator>();
+            services.AddTransient<RoomReservationValidator>();
+            services.AddTransient<CancelReservationValidator>();
+            services.AddTransient<ChangeReservationValidator>();
+            services.AddTransient<ListRoomReservationValidator>();
+            services.AddTransient<RoomReservationAvailabilityValidator>();
 
             return services;
         }

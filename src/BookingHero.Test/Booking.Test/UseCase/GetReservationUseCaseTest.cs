@@ -15,12 +15,12 @@ namespace Booking.UnitTest.UseCase
 {
     public class GetReservationUseCaseTest : UseCaseBaseTest
     {
-        private ILogger _logger;
+        private Mock<ILogger<GetReservationUseCase>> _logger;
 
         [OneTimeSetUp]
         public void InitEnvironment()
         {
-            _logger = _serviceProvider.GetService<ILogger>()!;
+            _logger = new Mock<ILogger<GetReservationUseCase>>();
         }
 
         [TestCase("D994184C-F976-4E4C-ACBB-B6B050CA0560", "D994184C", Description = "Should get reservation filtering by id and reservation code")]
@@ -35,7 +35,7 @@ namespace Booking.UnitTest.UseCase
                               new Reservation(Guid.NewGuid(), "", new Room(Guid.NewGuid(), "room", "303"), DateOnly.MinValue, DateOnly.MinValue, ReservationStatus.Confirmed, reservationCode)))
                           .Verifiable();
 
-            var getReservationUseCase = new GetReservationUseCase(_logger, roomRepository.Object);
+            var getReservationUseCase = new GetReservationUseCase(_logger.Object, roomRepository.Object);
 
             //Act
             var command = new GetReservationCommand()
