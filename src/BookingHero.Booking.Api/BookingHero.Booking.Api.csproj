@@ -15,11 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BookingHero.Booking.Core\BookingHero.Booking.Core.csproj" />
     <ProjectReference Include="..\BookingHero.Booking.Infra.DataBase\BookingHero.Booking.Infra.DataBase.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

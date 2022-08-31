@@ -3,7 +3,6 @@ using BookingHero.Booking.Core.UseCases.Commands.Reservation;
 using BookingHero.Booking.Core.UseCases.Dto;
 using BookingHero.UseCase;
 using Microsoft.Extensions.Logging;
-using BookingHero.Booking.Core.Utils.Extensions;
 
 namespace BookingHero.Booking.Core.UseCases.Reservation
 {
