@@ -12,7 +12,7 @@ Hotel booking is a challenge to develop a booking api for the very last hotel.
 - To simplify: DAY starts from 00:00 to 23:59:59
 - Every end-user can check the room availability, place a reservation, cancel it or modify it.
 - To simplify the API is insecure.
-## Architecture and Desing code
+## Architecture and Code Design
 
 Even though the last available room presents a strong competition to be booked, we have to consider the project deadline. Maybe, the best architecture to be chosen is a microservice that includes besides an api gateway, an microservice queue manager, to delivery preference numbers for end-users guarantee their bookings and other microservices to allow scalate in any direction and improve the services availiability. It could be combined with a CQRS pattern taking the advantage from the best of SQL databases to write bookings and NOSql databases to read the booking availiability.
 Although it seems to be the best solution it wouldn't be possible to implement on the proposed time of the project. So, I chose a very simple architecture that represents a single API targeting a first delivery, like any agile project.
