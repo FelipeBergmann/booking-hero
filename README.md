@@ -6,7 +6,7 @@ Hotel booking is a challenge to develop a booking api for the very last hotel.
 
 ## Customer requirements
 
-- no downtime: 99.99 to 100% availabilyt
+- no downtime: 99.99 to 100% availability
 - Any stay can't be longer than 3 days and can't be reserved more than 30 days in advance
 - All reservations start at least the next day of booking
 - To simplify: DAY starts from 00:00 to 23:59:59
